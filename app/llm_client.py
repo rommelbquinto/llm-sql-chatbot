@@ -61,7 +61,8 @@ def execute_sql(sql: str, fleet_id: str):
         sql = (
             "SELECT (COUNT(*) > 0) AS any_srm_t3_batt_temp_above_33c_last_24h "
             "FROM raw_telemetry rt "
-            "JOIN vehicles v ON rt.vehicle_id = v.vehicle_id "
+            # cast v.vehicle_id (integer) to text so it matches rt.vehicle_id
+            "JOIN vehicles v ON rt.vehicle_id = v.vehicle_id::text "
             "WHERE v.model = 'SRM T3' "
             "  AND rt.batt_temp_c > 33 "
             "  AND rt.ts >= NOW() - INTERVAL '24 HOURS'"
