@@ -39,14 +39,16 @@ def execute_sql(sql: str, fleet_id: str):
     conn = psycopg2.connect(os.getenv('DATABASE_URL'), connect_timeout=10)
     cur = conn.cursor()
     try:
+        # Attempt to execute the generated SQL
         cur.execute(sql, {'fleet_id': fleet_id})
-    except (errors.UndefinedColumn, errors.UndefinedTable):
-        # SOC/state_of_charge fallback
+    except (errors.UndefinedColumn, errors.UndefinedTable) as e:
+        # Clear the failed state so we can run a fallback
+        conn.rollback()
         lowered = sql.lower()
-        if ('select soc' in lowered or 'select state_of_charge' in lowered):
-            soc_map = MAPPING['soc']
-            table = soc_map['table']      # raw_telemetry
-            column = soc_map['column']    # soc_pct
+        if 'select soc' in lowered or 'select state_of_charge' in lowered:
+            soc_map = MAPPING.get('soc')
+            table = soc_map['table']      # e.g., 'raw_telemetry'
+            column = soc_map['column']    # e.g., 'soc_pct'
             fallback_sql = (
                 f"SELECT {column} AS soc "
                 f"FROM {table} "
@@ -54,6 +56,7 @@ def execute_sql(sql: str, fleet_id: str):
             )
             cur.execute(fallback_sql, {'fleet_id': fleet_id})
         else:
+            # Re-raise other table/column errors
             raise
     rows = cur.fetchmany(5000)
     cur.close()
