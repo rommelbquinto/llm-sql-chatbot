@@ -1,0 +1,7 @@
+soc:
+  table: vehicle_status
+  column: soc_percent
+battery_temp:
+  table: battery_metrics
+  column: temperature_celsius
+# ... more mappings
