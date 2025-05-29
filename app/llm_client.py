@@ -1,5 +1,6 @@
 import os, yaml
 from openai import OpenAI
+from psycopg2 import errors
 
 client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 # Load NL→column mapping
@@ -31,8 +32,6 @@ def nl_to_sql(prompt: str) -> str:
     else:
         parsed = raw_args
     return parsed['sql']
-
-from psycopg2 import errors
 
 def execute_sql(sql: str, fleet_id: str):
     conn = psycopg2.connect(os.getenv('DATABASE_URL'), connect_timeout=10)
