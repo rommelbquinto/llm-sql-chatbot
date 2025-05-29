@@ -1,5 +1,13 @@
 # LLM-Powered SQL Chatbot
 
+## Configuration
+- **OPENAI_API_KEY**: Obtain your API key from the OpenAI Dashboard under API Keys (https://platform.openai.com/account/api-keys). Create a new secret if needed and keep it secure.
+- **JWT_SECRET**: Generate a strong, random secret for signing JWTs. You can use one of these methods:
+  - **OpenSSL** (Linux/Mac): ```bash openssl rand -hex 32```
+  - **Python**: ```bash python3 -c "import secrets; print(secrets.token_hex(32))"```
+  -- Copy the resulting string and set it as `JWT_SECRET` in your `.env` file.
+- **DATABASE_URL**: Connection string for your PostgreSQL instance (e.g., from Render, Heroku, or local Postgres).
+
 ## Quickstart
 1. Copy `.env.example` to `.env` and fill in credentials.
 2. `docker-compose up --build`
