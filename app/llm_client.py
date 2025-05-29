@@ -1,6 +1,9 @@
-import os, yaml
-from openai import OpenAI
+import os
+import json
+import yaml
+import psycopg2
 from psycopg2 import errors
+from openai import OpenAI
 
 client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 # Load NL→column mapping
