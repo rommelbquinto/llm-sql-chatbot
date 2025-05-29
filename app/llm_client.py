@@ -1,17 +1,10 @@
-import os
+import os, yaml
 from openai import OpenAI
 
 client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
-
-MAPPING = None
-
-def load_mapping():
-    global MAPPING
-    import yaml
-    with open('semantic_mapping.yaml') as f:
-        MAPPING = yaml.safe_load(f)
-
-load_mapping()
+# Load NL→column mapping
+with open('semantic_mapping.yaml') as f:
+    MAPPING = yaml.safe_load(f)
 
 def nl_to_sql(prompt: str) -> str:
     # Call OpenAI with function schema and mapping
@@ -30,10 +23,16 @@ def nl_to_sql(prompt: str) -> str:
         }],
         function_call={'name':'generate_sql'}
     )
-    return response.choices[0].message.function_call.arguments['sql']
+    # The arguments field may be returned as a JSON string, so parse it
+    import json
+    raw_args = response.choices[0].message.function_call.arguments
+    if isinstance(raw_args, str):
+        parsed = json.loads(raw_args)
+    else:
+        parsed = raw_args
+    return parsed['sql']
 
 def execute_sql(sql: str, fleet_id: str):
-    # Connect and run parameterized query with timeout and row limit
     import psycopg2
     conn = psycopg2.connect(os.getenv('DATABASE_URL'), connect_timeout=10)
     cur = conn.cursor()
@@ -41,4 +40,3 @@ def execute_sql(sql: str, fleet_id: str):
     rows = cur.fetchmany(5000)
     cur.close()
     conn.close()
-    return rows
