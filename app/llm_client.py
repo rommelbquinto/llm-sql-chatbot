@@ -1,4 +1,5 @@
 import os, yaml
+from psycopg2 import errors
 from openai import OpenAI
 
 client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
@@ -38,15 +39,14 @@ def execute_sql(sql: str, fleet_id: str):
     conn = psycopg2.connect(os.getenv('DATABASE_URL'), connect_timeout=10)
     cur = conn.cursor()
     try:
-        # Attempt to execute the generated SQL
         cur.execute(sql, {'fleet_id': fleet_id})
-    except errors.UndefinedColumn as e:
-        # Fallback for SOC/state_of_charge queries
+    except (errors.UndefinedColumn, errors.UndefinedTable):
+        # SOC/state_of_charge fallback
         lowered = sql.lower()
         if ('select soc' in lowered or 'select state_of_charge' in lowered):
-            soc_map = MAPPING.get('soc')
-            table = soc_map['table']      # e.g., 'raw_telemetry'
-            column = soc_map['column']    # e.g., 'soc_pct'
+            soc_map = MAPPING['soc']
+            table = soc_map['table']      # raw_telemetry
+            column = soc_map['column']    # soc_pct
             fallback_sql = (
                 f"SELECT {column} AS soc "
                 f"FROM {table} "
@@ -54,7 +54,6 @@ def execute_sql(sql: str, fleet_id: str):
             )
             cur.execute(fallback_sql, {'fleet_id': fleet_id})
         else:
-            # Re-raise if not a SOC column issue
             raise
     rows = cur.fetchmany(5000)
     cur.close()
