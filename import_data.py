@@ -3,7 +3,7 @@ import psycopg2
 
 """
 1) Run schema migrations from schema.sql
-2) Bulk-load CSV files from data/
+2) Bulk-load CSV files from data/ in dependency order to satisfy foreign keys
 """
 
 def import_csvs():
@@ -16,18 +16,36 @@ def import_csvs():
         with open(schema_path, 'r') as f:
             cur.execute(f.read())
             print(f"Applied schema from {schema_path}")
-    else:
-        print(f"Warning: {schema_path} not found; ensure tables exist.")
 
-    # 2) Load CSV files via COPY STDIN
+    # 2) Define load order to satisfy FKs
+    load_order = [
+        'fleets',
+        'vehicles',
+        'drivers',
+        'driver_trip_map',
+        'trips',
+        'alerts',
+        'battery_cycles',
+        'charging_sessions',
+        'geofence_events',
+        'maintenance_logs',
+        'fleet_daily_summary',
+        'processed_metrics',
+        'raw_telemetry'
+    ]
+
+    # 3) Load CSV files via COPY STDIN in specified order
     data_dir = 'data'
-    for fname in os.listdir(data_dir):
-        if fname.endswith('.csv'):
-            table = fname.replace('.csv', '')
-            filepath = os.path.join(data_dir, fname)
+    for table in load_order:
+        csv_file = f"{table}.csv"
+        filepath = os.path.join(data_dir, csv_file)
+        if os.path.exists(filepath):
             print(f"Loading {filepath} into {table}...")
             with open(filepath, 'r') as f:
                 cur.copy_expert(f"COPY {table} FROM STDIN WITH CSV HEADER;", f)
+        else:
+            print(f"Warning: {filepath} not found, skipping {table}")
+
     conn.commit()
     cur.close()
     conn.close()
