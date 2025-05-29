@@ -1,7 +1,8 @@
+# Map natural language terms to table.column
 soc:
-  table: vehicle_status
-  column: soc_percent
+  table: raw_telemetry
+  column: soc_pct
 battery_temp:
   table: battery_metrics
   column: temperature_celsius
-# ... more mappings
+# Add further mappings as needed
