@@ -11,12 +11,14 @@
 - **DATABASE_URL**: Connection string for your PostgreSQL instance (e.g., from Render, Heroku, or local Postgres).
 
 ## Quickstart
-1. Copy `.env.example` to `.env` and fill in credentials.
-2. `docker-compose up --build`
-3. Visit `http://localhost:8000/ping` to verify.
-4. Use `/chat` endpoint or React widget in `frontend/`.
+1. Copy `.env.example` to `.env` and fill in the variables.
+2. Place your CSVs in `data/` and push to GitHub.
+3. Start services:
+   ```bash
+   docker-compose up --build
+   python import_data.py
+4. Verify: `curl http://localhost:8000/ping`
 5. Query the chat endpoint:
-   
   `curl -X POST http://localhost:8000/chat \`
   `-H "Authorization: Bearer <JWT>" \`
   `-H "Content-Type: application/json" \`
