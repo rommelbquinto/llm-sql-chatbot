@@ -32,11 +32,28 @@ def nl_to_sql(prompt: str) -> str:
         parsed = raw_args
     return parsed['sql']
 
+from psycopg2 import errors
+
 def execute_sql(sql: str, fleet_id: str):
-    import psycopg2
     conn = psycopg2.connect(os.getenv('DATABASE_URL'), connect_timeout=10)
     cur = conn.cursor()
-    cur.execute(sql, {'fleet_id': fleet_id})
+    try:
+        cur.execute(sql, {'fleet_id': fleet_id})
+    except errors.UndefinedColumn:
+        # Fallback for SOC queries
+        if 'from vehicles' in sql.lower() and 'select soc' in sql.lower():
+            soc_map = MAPPING['soc']
+            table = soc_map['table']         # should be 'vehicle_status'
+            column = soc_map['column']       # should be 'soc_percent'
+            fallback = (
+                f"SELECT {column} AS soc "
+                f"FROM {table} "
+                f"WHERE vehicle_id = %(fleet_id)s"
+            )
+            cur.execute(fallback, {'fleet_id': fleet_id})
+        else:
+            raise
     rows = cur.fetchmany(5000)
     cur.close()
     conn.close()
+    return rows
