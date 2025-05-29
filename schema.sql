@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS fleets (
 
 -- vehicles.csv
 CREATE TABLE IF NOT EXISTS vehicles (
-    vehicle_id BIGINT PRIMARY KEY,
+    vehicle_id TEXT PRIMARY KEY,
     vin TEXT,
     fleet_id TEXT REFERENCES fleets(fleet_id),
     model TEXT,
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS driver_trip_map (
 -- trips.csv
 CREATE TABLE IF NOT EXISTS trips (
     trip_id TEXT PRIMARY KEY,
-    vehicle_id BIGINT REFERENCES vehicles(vehicle_id),
+    vehicle_id TEXT REFERENCES vehicles(vehicle_id),
     driver_id TEXT REFERENCES drivers(driver_id),
     start_ts TIMESTAMPTZ,
     end_ts TIMESTAMPTZ,
@@ -52,8 +52,8 @@ CREATE TABLE IF NOT EXISTS trips (
 
 -- alerts.csv
 CREATE TABLE IF NOT EXISTS alerts (
-    alert_id BIGINT PRIMARY KEY,
-    vehicle_id BIGINT REFERENCES vehicles(vehicle_id),
+    alert_id TEXT PRIMARY KEY,
+    vehicle_id TEXT REFERENCES vehicles(vehicle_id),
     alert_type TEXT,
     severity TEXT,
     alert_ts TIMESTAMPTZ,
@@ -65,8 +65,8 @@ CREATE TABLE IF NOT EXISTS alerts (
 
 -- battery_cycles.csv
 CREATE TABLE IF NOT EXISTS battery_cycles (
-    cycle_id BIGINT PRIMARY KEY,
-    vehicle_id BIGINT REFERENCES vehicles(vehicle_id),
+    cycle_id TEXT PRIMARY KEY,
+    vehicle_id TEXT REFERENCES vehicles(vehicle_id),
     ts TIMESTAMPTZ,
     dod_pct INTEGER,
     soh_pct INTEGER
@@ -74,8 +74,8 @@ CREATE TABLE IF NOT EXISTS battery_cycles (
 
 -- charging_sessions.csv
 CREATE TABLE IF NOT EXISTS charging_sessions (
-    session_id BIGINT PRIMARY KEY,
-    vehicle_id BIGINT REFERENCES vehicles(vehicle_id),
+    session_id TEXT PRIMARY KEY,
+    vehicle_id TEXT REFERENCES vehicles(vehicle_id),
     start_ts TIMESTAMPTZ,
     end_ts TIMESTAMPTZ,
     start_soc INTEGER,
@@ -86,8 +86,8 @@ CREATE TABLE IF NOT EXISTS charging_sessions (
 
 -- geofence_events.csv
 CREATE TABLE IF NOT EXISTS geofence_events (
-    event_id BIGINT PRIMARY KEY,
-    vehicle_id BIGINT REFERENCES vehicles(vehicle_id),
+    event_id TEXT PRIMARY KEY,
+    vehicle_id TEXT REFERENCES vehicles(vehicle_id),
     geofence_name TEXT,
     enter_ts TIMESTAMPTZ,
     exit_ts TIMESTAMPTZ
@@ -95,8 +95,8 @@ CREATE TABLE IF NOT EXISTS geofence_events (
 
 -- maintenance_logs.csv
 CREATE TABLE IF NOT EXISTS maintenance_logs (
-    maint_id BIGINT PRIMARY KEY,
-    vehicle_id BIGINT REFERENCES vehicles(vehicle_id),
+    maint_id TEXT PRIMARY KEY,
+    vehicle_id TEXT REFERENCES vehicles(vehicle_id),
     maint_type TEXT,
     start_ts TIMESTAMPTZ,
     end_ts TIMESTAMPTZ,
@@ -117,7 +117,7 @@ CREATE TABLE IF NOT EXISTS fleet_daily_summary (
 -- processed_metrics.csv
 CREATE TABLE IF NOT EXISTS processed_metrics (
     ts TIMESTAMPTZ,
-    vehicle_id BIGINT REFERENCES vehicles(vehicle_id),
+    vehicle_id TEXT REFERENCES vehicles(vehicle_id),
     avg_speed_kph_15m DOUBLE PRECISION,
     distance_km_15m DOUBLE PRECISION,
     energy_kwh_15m DOUBLE PRECISION,
@@ -128,7 +128,7 @@ CREATE TABLE IF NOT EXISTS processed_metrics (
 -- raw_telemetry.csv
 CREATE TABLE IF NOT EXISTS raw_telemetry (
     ts TIMESTAMPTZ,
-    vehicle_id BIGINT REFERENCES vehicles(vehicle_id),
+    vehicle_id TEXT REFERENCES vehicles(vehicle_id),
     soc_pct INTEGER,
     pack_voltage_v DOUBLE PRECISION,
     pack_current_a DOUBLE PRECISION,
