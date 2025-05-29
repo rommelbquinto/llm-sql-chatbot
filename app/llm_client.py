@@ -48,7 +48,7 @@ def execute_sql(sql: str, fleet_id: str):
         )
 
     # 2) “How many SRM T3 EVs are in my fleet?”
-    elif 'count' in low and 'srm t3' in low and 'ev' in low:
+    elif 'count' in low and 'srm t3' in low:
         sql = (
             "SELECT COUNT(*) AS count_of_srm_t3_evs "
             "FROM vehicles "
