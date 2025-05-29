@@ -17,10 +17,10 @@
 4. Use `/chat` endpoint or React widget in `frontend/`.
 5. Query the chat endpoint:
    
-   curl -X POST http://localhost:8000/chat \
-  -H "Authorization: Bearer <JWT>" \
-  -H "Content-Type: application/json" \
-  -d '{"user_input":"Count of SRM T3 EVs"}'
+  `curl -X POST http://localhost:8000/chat \`
+  `-H "Authorization: Bearer <JWT>" \`
+  `-H "Content-Type: application/json" \`
+  `-d '{"user_input":"Count of SRM T3 EVs"}'`
 
 ## Architecture
 - FastAPI backend
