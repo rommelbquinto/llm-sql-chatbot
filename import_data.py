@@ -3,7 +3,7 @@ import os, psycopg2
 def import_csvs():
     conn = psycopg2.connect(os.getenv('DATABASE_URL'))
     cur = conn.cursor()
-    for fname in os.listdir('data'):
+    for fname in os.listdir('main'):
         if fname.endswith('.csv'):
             table = fname.replace('.csv', '')
             cur.execute(
