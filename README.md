@@ -5,7 +5,7 @@
 - **JWT_SECRET**: Generate a strong, random secret for signing JWTs. You can use one of these methods:
   - **OpenSSL** (Linux/Mac): ```bash openssl rand -hex 32```
   - **Python**: ```bash python3 -c "import secrets; print(secrets.token_hex(32))"```
-  -- Copy the resulting string and set it as `JWT_SECRET` in your `.env` file.
+  - Copy the resulting string and set it as `JWT_SECRET` in your `.env` file.
 - **DATABASE_URL**: Connection string for your PostgreSQL instance (e.g., from Render, Heroku, or local Postgres).
 
 ## Quickstart
