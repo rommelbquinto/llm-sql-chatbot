@@ -17,8 +17,10 @@
    ```bash
    docker-compose up --build
    python import_data.py
-4. Verify: `curl http://localhost:8000/ping`
-5. Query the chat endpoint:
+4. Verify:
+   ```bash
+   curl http://localhost:8000/ping
+6. Query the chat endpoint:
    ```bash
    curl -X POST http://localhost:8000/chat \
    -H "Authorization: Bearer <JWT>" \
